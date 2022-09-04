@@ -28,6 +28,28 @@ public class Main {
 	
 	}
 	
+	public static void checkAndRun(String[] arrRequest) {
+			int lnRequast = arrRequest.length;
+			
+			if(lnRequast > 2) {
+				String[] param =  Arrays.copyOfRange(arrRequest, 2, arrRequest.length);
+				for (int i = 0; i < param.length; i++){
+					param[i] = param[i].toUpperCase();
+				}
+				if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1]) && propertyCheck(param) && aLotPropertyCheck(param)){
+					propertyNums(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]), param);
+				 }
+			} else if (lnRequast > 1) {
+				if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1])){
+					rangeOfNum(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]));
+				 }
+			} else {
+				if(firstParamCheck(arrRequest[0])){
+					 oneNum(Long.parseLong(arrRequest[0]));
+				 }
+			}
+		}
+	
 		public static boolean isEven(long number) {
 			if (number % 2 == 0) {
 				return true;
@@ -109,6 +131,18 @@ public class Main {
 			return result;
 		}
 		
+		public static boolean isJumping(long number) {
+			String[] arr = Long.toString(number).split("");
+			if (arr.length == 1) {
+				return true;
+			}
+			for (int i = 0; i < arr.length - 1; i++) {
+				if (Math.abs(Long.parseLong(arr[i + 1]) - Long.parseLong(arr[i])) != 1) {
+					return false;
+				}
+			}
+			return true;
+		}
 		
 		public static void oneNum (long number) {
 			System.out.println("Properties of " + format.format(number));
@@ -119,6 +153,7 @@ public class Main {
 			System.out.println(String.format("         spy: %b", isSpy(number)));
 			System.out.println(String.format("      square: %b", isSquare(number)));
 			System.out.println(String.format("       sunny: %b", isSunny(number)));
+			System.out.println(String.format("     jumping: %b", isJumping(number)));
 			System.out.println(String.format("        even: %b", isEven(number)));
 			System.out.println(String.format("         odd: %b", isOdd(number)));
 		}
@@ -136,11 +171,9 @@ public class Main {
 			int i = 0;
 			while (i < j) {
 				int counter = 0;
-				String tmp = builder(number);
+				String tmp = builder(number).toUpperCase();
 				for (String s : properties){
-					if (tmp.contains(s.toLowerCase())) {
-						counter++;
-					}
+					counter += tmp.contains(s) ? 1 : 0;
 				}
 				if (counter == properties.length) {
 					i++;
@@ -150,39 +183,6 @@ public class Main {
 			}
 		}
 		
-		public static void checkAndRun(String[] arrRequest) {
-			int lnRequast = arrRequest.length;
-			switch(lnRequast) {
-				case 1: 
-					 if(firstParamCheck(arrRequest[0])){
-						 oneNum(Long.parseLong(arrRequest[0]));
-					 }
-					break;
-				case 2: 
-					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1])){
-						rangeOfNum(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]));
-					 }
-					break;
-				case 3:
-					String[] param =  Arrays.copyOfRange(arrRequest, 2, arrRequest.length);
-					for (int i = 0; i < param.length; i++){
-						param[i] = param[i].toUpperCase();
-					}
-					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1]) && propertyCheck(param)){
-						propertyNums(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]), param);
-					 }
-					break;
-				case 4: 
-					String[] param1 =  Arrays.copyOfRange(arrRequest, 2, arrRequest.length);
-					for (int i = 0; i < param1.length; i++){
-						param1[i] = param1[i].toUpperCase();
-					}
-					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1]) && propertyCheck(param1) && aLotPropertyCheck(param1)){
-						propertyNums(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]), param1);
-					 }
-					break;
-			}
-		}
 		
 		public static boolean firstParamCheck(String param) {
 			if (Long.parseLong(param) < 0 || Long.parseLong(param) == 0) {
@@ -202,7 +202,7 @@ public class Main {
 		
 		public static boolean propertyCheck(String[] param) {
 			int counter = 0;
-			String[] rqs = {"EVEN", "ODD", "BUZZ", "DUCK", "PALINDROMIC", "GAPFUL", "SPY", "SQUARE", "SUNNY"};
+			String[] rqs = {"EVEN", "ODD", "BUZZ", "DUCK", "PALINDROMIC", "GAPFUL", "SPY", "SQUARE", "SUNNY", "JUMPING"};
 			for (String s : param) {
 				for ( String t : rqs) {
 					if(s.equals(t)) {
@@ -222,9 +222,14 @@ public class Main {
 		}
 		
 		public static boolean aLotPropertyCheck(String[] param) {
-			String[][] rqs = {{"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}};
+			String tmp = Arrays.toString(param);
+			String[][] rqs = {{"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}, {"-EVEN", "-ODD"}, {"-DUCK", "-SPY"}, {"-SQUARE", "-SUNNY"}};
 			for (String[] s : rqs) {
-				if (s[0].equals(param[0]) && s[1].equals(param[1]) || (s[0].equals(param[1]) && s[1].equals(param[0]))) {
+				int counter = 0;
+				for (String j : s){
+					counter += tmp.contains(j) ? 1 : 0;
+				}
+				if (counter == 2) {
 					System.out.println("The request contains mutually exclusive properties: " + Arrays.toString(param));
 					System.out.println("There are no numbers with these properties.");
 					return false;
@@ -242,6 +247,7 @@ public class Main {
 			results += isSpy(number) ? "spy, " : "";
 			results += isSquare(number) ? "square, " : "";
 			results += isSunny(number) ? "sunny, " : "";
+			results += isJumping(number) ? "jumping, " : "";
 			results += isEven(number) ? "even" : "";
 			results += isOdd(number) ? "odd" : "";
 			return results;
