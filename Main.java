@@ -10,11 +10,11 @@ public class Main {
 		
     public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Welcome to Amazing Numbers!\n\nSupported requests:");
+		System.out.println("Welcome to Amazing Numbers!\nSupported requests:");
 		System.out.println("- enter a natural number to know its properties;\n- enter two natural numbers to obtain the properties of the list:");
 		System.out.println("  * the first parameter represents a starting number;");
-		System.out.println("  * the second parameter shows how many consecutive numbers are to be processed;\n- two natural numbers and a property to search for;");
-		System.out.println("- separate the parameters with one space;\n- enter 0 to exit.");
+		System.out.println("  * the second parameters show how many consecutive numbers are to be processed;\n- two natural numbers and two properties to search for;");
+		System.out.println("- separate the parameters with one space\n- enter 0 to exit.");
 		
 		long num = 1;
 		while (num != 0) {
@@ -165,12 +165,18 @@ public class Main {
 					break;
 				case 3:
 					String[] param =  Arrays.copyOfRange(arrRequest, 2, arrRequest.length);
+					for (int i = 0; i < param.length; i++){
+						param[i] = param[i].toUpperCase();
+					}
 					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1]) && propertyCheck(param)){
 						propertyNums(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]), param);
 					 }
 					break;
 				case 4: 
 					String[] param1 =  Arrays.copyOfRange(arrRequest, 2, arrRequest.length);
+					for (int i = 0; i < param1.length; i++){
+						param1[i] = param1[i].toUpperCase();
+					}
 					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1]) && propertyCheck(param1) && aLotPropertyCheck(param1)){
 						propertyNums(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]), param1);
 					 }
@@ -198,7 +204,6 @@ public class Main {
 			int counter = 0;
 			String[] rqs = {"EVEN", "ODD", "BUZZ", "DUCK", "PALINDROMIC", "GAPFUL", "SPY", "SQUARE", "SUNNY"};
 			for (String s : param) {
-				s = s.toUpperCase();
 				for ( String t : rqs) {
 					if(s.equals(t)) {
 						counter++;
@@ -209,7 +214,8 @@ public class Main {
 			if (counter == param.length) {
 				return true;
 			}
-			System.out.println("The property " + Arrays.toString(param) + " is wrong.");
+			boolean errms = (param.length > 1 && counter == 0);
+			System.out.println(String.format("The %s %s %s wrong.", errms ? "properties":"property", Arrays.toString(param), errms ? "are" : "is"));
 			System.out.println("Available properties " + Arrays.toString(rqs));
 			return false;
 			
@@ -217,8 +223,6 @@ public class Main {
 		
 		public static boolean aLotPropertyCheck(String[] param) {
 			String[][] rqs = {{"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}};
-			param[0] = param[0].toUpperCase();
-			param[1] = param[1].toUpperCase();
 			for (String[] s : rqs) {
 				if (s[0].equals(param[0]) && s[1].equals(param[1]) || (s[0].equals(param[1]) && s[1].equals(param[0]))) {
 					System.out.println("The request contains mutually exclusive properties: " + Arrays.toString(param));
