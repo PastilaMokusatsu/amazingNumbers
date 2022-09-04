@@ -5,17 +5,7 @@ import java.util.Arrays;
 
 
 
-public class Main {
-	
-	public static String[] rqs = {
-        "EVEN",
-		"ODD",
-		"BUZZ",
-		"DUCK",
-		"PALINDROMIC",
-		"GAPFUL",
-		"SPY"};
-		
+public class Main {	
 	public static NumberFormat format = NumberFormat.getInstance(new Locale("en", "US"));
 		
     public static void main(String[] args) {
@@ -31,42 +21,8 @@ public class Main {
 			System.out.print("\nEnter a request: ");
 			String[] request = sc.nextLine().split(" ");
 			num = Long.parseLong(request[0]);
-			int lnRequest = request.length;
-			boolean errFlag = true;
 			System.out.println();
-			if (Long.parseLong(request[0]) < 0 || Long.parseLong(request[0]) == 0) {
-				errFlag = false;
-				System.out.print("The first parameter should be a natural number or zero.");
-			}
-			if (lnRequest > 1 && errFlag) {
-				if (Long.parseLong(request[1]) <= 0) {
-					errFlag = false;
-					System.out.println("The second parameter should be a natural number.");
-				}
-			}
-			if (lnRequest > 2 && errFlag) {
-				boolean fl = false;
-				for (String s : rqs) {
-					if (s.equalsIgnoreCase(request[2])) {
-						fl = true;
-						break;
-					}
-				}
-				if (!fl) {
-					System.out.print("The property [" + request[2].toUpperCase() + "] is wrong.");
-					System.out.print("Available properties " + Arrays.toString(rqs));
-					errFlag = false;
-				}
-				
-			}
-			if (errFlag) {
-				switch(lnRequest) {
-				case 1: oneNum(Long.parseLong(request[0])); break;
-				case 2: rangeOfNum(Long.parseLong(request[0]), Long.parseLong(request[1])); break;
-				case 3: propertyNums(Long.parseLong(request[0]), Long.parseLong(request[1]), request[2]); break;
-				}
-			}
-			
+			checkAndRun(request);
 		}
 		System.out.println("\nGoodbye!");
 	
@@ -161,15 +117,13 @@ public class Main {
 			System.out.println(String.format(" palindromic: %b", isPalindrom(number)));
 			System.out.println(String.format("      gapful: %b", isGapful(number)));
 			System.out.println(String.format("         spy: %b", isSpy(number)));
+			System.out.println(String.format("      square: %b", isSquare(number)));
+			System.out.println(String.format("       sunny: %b", isSunny(number)));
 			System.out.println(String.format("        even: %b", isEven(number)));
 			System.out.println(String.format("         odd: %b", isOdd(number)));
 		}
 		
 		public static void rangeOfNum (long num, long j) {
-			if (j <= 0 ) {
-                System.out.println("The second parameter should be a natural number");
-				return;
-            }
 			for(int i = 0; i < j; i++) {
 				long number = num + i ;
 				System.out.println(builder(number));
@@ -178,62 +132,101 @@ public class Main {
 			return;	
 		}
 		
-		public static void propertyNums(long number, long j, String property) {
-			property = property.toUpperCase();
+		public static void propertyNums(long number, long j, String[] properties) {
 			int i = 0;
-			while (i != j){
-				switch (property) {
-					case("EVEN") : 
-						if (isEven(number)) {
-							System.out.println(builder(number));	
-							i++;
-						} 
-						number++;
+			while (i < j) {
+				int counter = 0;
+				String tmp = builder(number);
+				for (String s : properties){
+					if (tmp.contains(s.toLowerCase())) {
+						counter++;
+					}
+				}
+				if (counter == properties.length) {
+					i++;
+					System.out.println(tmp);
+				}
+				number++;
+			}
+		}
+		
+		public static void checkAndRun(String[] arrRequest) {
+			int lnRequast = arrRequest.length;
+			switch(lnRequast) {
+				case 1: 
+					 if(firstParamCheck(arrRequest[0])){
+						 oneNum(Long.parseLong(arrRequest[0]));
+					 }
+					break;
+				case 2: 
+					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1])){
+						rangeOfNum(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]));
+					 }
+					break;
+				case 3:
+					String[] param =  Arrays.copyOfRange(arrRequest, 2, arrRequest.length);
+					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1]) && propertyCheck(param)){
+						propertyNums(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]), param);
+					 }
+					break;
+				case 4: 
+					String[] param1 =  Arrays.copyOfRange(arrRequest, 2, arrRequest.length);
+					if(firstParamCheck(arrRequest[0]) && secondParameterCheck(arrRequest[1]) && propertyCheck(param1) && aLotPropertyCheck(param1)){
+						propertyNums(Long.parseLong(arrRequest[0]), Long.parseLong(arrRequest[1]), param1);
+					 }
+					break;
+			}
+		}
+		
+		public static boolean firstParamCheck(String param) {
+			if (Long.parseLong(param) < 0 || Long.parseLong(param) == 0) {
+				System.out.println("The first parameter should be a natural number or zero.");
+				return false;
+			}
+			return true;
+		}
+		
+		public static boolean secondParameterCheck(String param) {
+			if (Long.parseLong(param) <= 0) {
+				System.out.println("The second parameter should be a natural number.");
+				return false;
+			}
+			return true;
+		}
+		
+		public static boolean propertyCheck(String[] param) {
+			int counter = 0;
+			String[] rqs = {"EVEN", "ODD", "BUZZ", "DUCK", "PALINDROMIC", "GAPFUL", "SPY", "SQUARE", "SUNNY"};
+			for (String s : param) {
+				s = s.toUpperCase();
+				for ( String t : rqs) {
+					if(s.equals(t)) {
+						counter++;
 						break;
-					case("ODD") : 
-						if (isOdd(number)) {
-							System.out.println(builder(number));	
-							i++;
-						} 
-						number++;
-						break;
-					case("BUZZ") : 
-						if (isBuzz(number)) {
-							System.out.println(builder(number));	
-							i++;
-						} 
-						number++;
-						break;
-					case("DUCK") : 
-						if (isDuck(number)) {
-							System.out.println(builder(number));	
-							i++;
-						} 
-						number++;
-						break;
-					case("PALINDROMIC") : 
-						if (isPalindrom(number)) {
-							System.out.println(builder(number));	
-							i++;
-						} 
-						number++;
-						break;
-					case("GAPFUL") : 
-						if (isGapful(number)) {
-							System.out.println(builder(number));	
-							i++;
-						}
-						number++;
-						break;
-					case("SPY") : 
-						if (isSpy(number)) {
-							System.out.println(builder(number));	
-							i++;
-						} 
-						number++;
-						break;
+					}
 				}
 			}
+			if (counter == param.length) {
+				return true;
+			}
+			System.out.println("The property " + Arrays.toString(param) + " is wrong.");
+			System.out.println("Available properties " + Arrays.toString(rqs));
+			return false;
+			
+		}
+		
+		public static boolean aLotPropertyCheck(String[] param) {
+			String[][] rqs = {{"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}};
+			param[0] = param[0].toUpperCase();
+			param[1] = param[1].toUpperCase();
+			for (String[] s : rqs) {
+				if (s[0].equals(param[0]) && s[1].equals(param[1]) || (s[0].equals(param[1]) && s[1].equals(param[0]))) {
+					System.out.println("The request contains mutually exclusive properties: " + Arrays.toString(param));
+					System.out.println("There are no numbers with these properties.");
+					return false;
+				}
+			}
+			return true;
 		}
 		
 		public static String builder(long number) {
@@ -243,6 +236,8 @@ public class Main {
 			results += isPalindrom(number) ? "palindromic, " : "";
 			results += isGapful(number) ? "gapful, " : "";
 			results += isSpy(number) ? "spy, " : "";
+			results += isSquare(number) ? "square, " : "";
+			results += isSunny(number) ? "sunny, " : "";
 			results += isEven(number) ? "even" : "";
 			results += isOdd(number) ? "odd" : "";
 			return results;
