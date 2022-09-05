@@ -14,7 +14,7 @@ public class Main {
 		System.out.println("- enter a natural number to know its properties;\n- enter two natural numbers to obtain the properties of the list:");
 		System.out.println("  * the first parameter represents a starting number;");
 		System.out.println("  * the second parameters show how many consecutive numbers are to be processed;\n- two natural numbers and two properties to search for;");
-		System.out.println("- separate the parameters with one space\n- enter 0 to exit.");
+		System.out.println("- a property preceded by minus must not be present in numbers;\n- separate the parameters with one space\n- enter 0 to exit.");
 		
 		long num = 1;
 		while (num != 0) {
@@ -260,14 +260,21 @@ public class Main {
 		}
 		
 		public static boolean aLotPropertyCheck(String[] param) {
-			String tmp = Arrays.toString(param);
-			String[][] rqs = {{"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}, {"-EVEN", "-ODD"}, {"-DUCK", "-SPY"},
-								{"HAPPY", "SAD"}, {"EVEN", "-EVEN"}, {"-ODD", "ODD"}, {"-HAPPY", "-SAD"}, {"BUZZ", "-BUZZ"}, {"DUCK", "-DUCK"}, {"PALINDROMIC", "-PALINDROMIC"}, {"GAPFUL", "-GAPFUL"}, 
-								{"SPY", "-SPY"}, {"SQUARE", "-SQUARE"}, {"SUNNY", "-SUNNY"}, {"JUMPING", "-JUMPING"}, {"HAPPY", "-HAPPY"}, {"SAD", "-SAD"}};
+			String[][] rqs = {{"-EVEN", "-ODD"}, {"-DUCK", "-SPY"}, {"HAPPY", "SAD"}, {"EVEN", "-EVEN"}, {"-ODD", "ODD"}, {"-HAPPY", "-SAD"}, {"BUZZ", "-BUZZ"}, {"DUCK", "-DUCK"}, {"PALINDROMIC", "-PALINDROMIC"}, {"GAPFUL", "-GAPFUL"}, 
+							 {"SQUARE", "-SQUARE"}, {"SUNNY", "-SUNNY"}, {"JUMPING", "-JUMPING"}, {"HAPPY", "-HAPPY"}, {"SAD", "-SAD"}, {"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}};
 			for (String[] s : rqs) {
 				int counter = 0;
-				for (String j : s){
-					counter += tmp.contains(" " + j + " ") ? 1 : 0;
+				for (int i = 0; i < param.length; i++) {
+					if (s[0].equals(param[i])) {
+						counter++;
+						break;
+					}
+				}
+				for (int i = 0; i < param.length; i++) {
+					if (s[1].equals(param[i])) {
+						counter++;
+						break;
+					}
 				}
 				if (counter == 2) {
 					System.out.println("The request contains mutually exclusive properties: " + Arrays.toString(s));
