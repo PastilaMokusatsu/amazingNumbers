@@ -144,8 +144,35 @@ public class Main {
 			return true;
 		}
 		
+		public static long sumForHappy(long number){  
+        long tmp = 0, sum = 0;  
+          
+        //Calculates the sum of squares of digits  
+        while(number > 0){  
+            tmp = number % 10;  
+            sum = sum + (tmp * tmp);  
+            number = number / 10;  
+        }  
+        return sum;  
+		}
+		
+		public static boolean isHappy(long number) {
+			long result = number;  
+          
+			while(result != 1 && result != 4){
+				result = sumForHappy(result); 			
+			}
+			return result == 1 ? true : false;
+		}
+		
+		public static boolean isSad(long number) {
+			return !(isHappy(number));
+		}
+		
 		public static void oneNum (long number) {
 			System.out.println("Properties of " + format.format(number));
+			System.out.println(String.format("        even: %b", isEven(number)));
+			System.out.println(String.format("         odd: %b", isOdd(number)));
 			System.out.println(String.format("        buzz: %b", isBuzz(number)));
 			System.out.println(String.format("        duck: %b", isDuck(number)));
 			System.out.println(String.format(" palindromic: %b", isPalindrom(number)));
@@ -154,8 +181,8 @@ public class Main {
 			System.out.println(String.format("      square: %b", isSquare(number)));
 			System.out.println(String.format("       sunny: %b", isSunny(number)));
 			System.out.println(String.format("     jumping: %b", isJumping(number)));
-			System.out.println(String.format("        even: %b", isEven(number)));
-			System.out.println(String.format("         odd: %b", isOdd(number)));
+			System.out.println(String.format("       happy: %b", isHappy(number)));
+			System.out.println(String.format("         sad: %b", isSad(number)));
 		}
 		
 		public static void rangeOfNum (long num, long j) {
@@ -171,18 +198,28 @@ public class Main {
 			int i = 0;
 			while (i < j) {
 				int counter = 0;
+				int positiveSize = properties.length;
+				boolean containNegative = false;
 				String tmp = builder(number).toUpperCase();
 				for (String s : properties){
-					counter += tmp.contains(s) ? 1 : 0;
+					if (s.startsWith("-")) {
+						positiveSize -= 1;
+						if (tmp.contains(s.substring(1))){
+							containNegative = true;
+							break;
+						}
+							
+					} else {
+						counter += tmp.contains(s) ? 1 : 0;
+					}
 				}
-				if (counter == properties.length) {
+				if (counter == positiveSize && !containNegative) {
 					i++;
-					System.out.println(tmp);
+					System.out.println(tmp.toLowerCase());
 				}
 				number++;
 			}
 		}
-		
 		
 		public static boolean firstParamCheck(String param) {
 			if (Long.parseLong(param) < 0 || Long.parseLong(param) == 0) {
@@ -202,7 +239,8 @@ public class Main {
 		
 		public static boolean propertyCheck(String[] param) {
 			int counter = 0;
-			String[] rqs = {"EVEN", "ODD", "BUZZ", "DUCK", "PALINDROMIC", "GAPFUL", "SPY", "SQUARE", "SUNNY", "JUMPING"};
+			String[] rqs = {"EVEN", "ODD", "BUZZ", "DUCK", "PALINDROMIC", "GAPFUL", "SPY", "SQUARE", "SUNNY", "JUMPING", "HAPPY", "SAD", 
+						"-EVEN", "-ODD", "-BUZZ", "-DUCK", "-PALINDROMIC", "-GAPFUL", "-SPY", "-SQUARE", "-SUNNY", "-JUMPING", "-HAPPY", "-SAD"};
 			for (String s : param) {
 				for ( String t : rqs) {
 					if(s.equals(t)) {
@@ -223,14 +261,16 @@ public class Main {
 		
 		public static boolean aLotPropertyCheck(String[] param) {
 			String tmp = Arrays.toString(param);
-			String[][] rqs = {{"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}, {"-EVEN", "-ODD"}, {"-DUCK", "-SPY"}, {"-SQUARE", "-SUNNY"}};
+			String[][] rqs = {{"EVEN", "ODD"}, {"DUCK", "SPY"}, {"SQUARE", "SUNNY"}, {"-EVEN", "-ODD"}, {"-DUCK", "-SPY"},
+								{"HAPPY", "SAD"}, {"EVEN", "-EVEN"}, {"-ODD", "ODD"}, {"-HAPPY", "-SAD"}, {"BUZZ", "-BUZZ"}, {"DUCK", "-DUCK"}, {"PALINDROMIC", "-PALINDROMIC"}, {"GAPFUL", "-GAPFUL"}, 
+								{"SPY", "-SPY"}, {"SQUARE", "-SQUARE"}, {"SUNNY", "-SUNNY"}, {"JUMPING", "-JUMPING"}, {"HAPPY", "-HAPPY"}, {"SAD", "-SAD"}};
 			for (String[] s : rqs) {
 				int counter = 0;
 				for (String j : s){
-					counter += tmp.contains(j) ? 1 : 0;
+					counter += tmp.contains(" " + j + " ") ? 1 : 0;
 				}
 				if (counter == 2) {
-					System.out.println("The request contains mutually exclusive properties: " + Arrays.toString(param));
+					System.out.println("The request contains mutually exclusive properties: " + Arrays.toString(s));
 					System.out.println("There are no numbers with these properties.");
 					return false;
 				}
@@ -240,6 +280,8 @@ public class Main {
 		
 		public static String builder(long number) {
 			String results = format.format(number) + " is ";
+			results += isEven(number) ? "even, " : "";
+			results += isOdd(number) ? "odd, " : "";
 			results += isBuzz(number) ? "buzz, " : "";
 			results += isDuck(number) ? "duck, " : "";
 			results += isPalindrom(number) ? "palindromic, " : "";
@@ -248,8 +290,8 @@ public class Main {
 			results += isSquare(number) ? "square, " : "";
 			results += isSunny(number) ? "sunny, " : "";
 			results += isJumping(number) ? "jumping, " : "";
-			results += isEven(number) ? "even" : "";
-			results += isOdd(number) ? "odd" : "";
+			results += isHappy(number) ? "happy" : "";
+			results += isSad(number) ? "sad" : "";
 			return results;
 				
 		}
